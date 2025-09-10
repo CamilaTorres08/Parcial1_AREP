@@ -21,9 +21,10 @@ public class Calculator {
         for(Double value : values){
             sum += value;
         }
+
         int totalNumbers = values.size();
         if(totalNumbers != 0){
-            return (1/totalNumbers ) * sum;
+            return ((double) 1/totalNumbers) * sum;
         }
         return null;
     }
