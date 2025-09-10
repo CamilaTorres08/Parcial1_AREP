@@ -8,10 +8,14 @@ Compilar el proyecto
 ```
 mvn clean package
 ```
-Ejecutar el archivo principal (Fachada)
+
+Ejecutar el archivo principal (Facade)
+
 ```
-mvn exec:java
+java -cp target/classes edu.eci.arep.Facade
 ```
+
+o directamente dando clic en Run
 
 # Pruebas
 
