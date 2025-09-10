@@ -14,7 +14,7 @@ import static edu.eci.arep.helpers.Converter.convertResponse;
 
 public class Facade {
     private static final String USER_AGENT = "Mozilla/5.0";
-    private static final String GET_URL = "http://localhost:36000/";
+    private static final String GET_URL = "http://localhost:36000";
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = null;
@@ -71,14 +71,18 @@ public class Facade {
         HttpRequest req = new HttpRequest(uri);
         HttpResponse resp = new HttpResponse();
         try{
+            System.out.println(req.getRoute());
             if(req.getRoute().startsWith("/cliente")){
                 String file = sendFile();
-                resp = resp.statusCode(200).statusMessage("OK").body(file).headers("Content-type","text/html");
+                return file;
             }
-            else{
+            else if(req.getRoute().startsWith("/add") || req.getRoute().startsWith("/list") || req.getRoute().startsWith("/stats") || req.getRoute().startsWith("/clear")){
                 resp = manageGetResponse(req);
             }
-        }catch (Exception e){
+        }catch(ConnectException ex) {
+            resp = resp.statusCode(502).statusMessage("Bad Gateway").body(convertErrorMessage(502, "backend_unreachable")).headers("Content-type", "application/json");
+        }
+        catch(IOException e){
             resp = resp.statusCode(500).statusMessage("Internal Server Error").body(convertErrorMessage(500, e.getMessage())).headers("Content-type", "application/json");
         }
 
@@ -110,7 +114,10 @@ public class Facade {
         return res;
     }
     public static String sendFile(){
-        return
+        return "HTTP/1.1 200 OK \r\n"
+                + "Content-type: text/html\r\n"
+                + "\r\n"
+                +
                 """
                 <!DOCTYPE html>
                 <html>
@@ -123,22 +130,63 @@ public class Facade {
                                         
                 <body>
                     <h1>Form with GET</h1>
-                    <form action="/hello">
-                        <label for="name">Name:</label><br>
-                        <input type="text" id="name" name="name" value="John"><br><br>
+                    <form action="/add">
+                        <label for="add">Add method:</label><br>
+                        <input type="text" id="add" name="add"><br><br>
                         <input type="button" value="Submit" onclick="loadGetMsg()">
                     </form>
                     <div id="getrespmsg"></div>
-                                        
+                    <form action="/list">
+                        <label for="list">List Method:</label><br>
+                        <input type="button" value="Submit" onclick="loadGetMsg2()">
+                    </form>
+                    <div id="getrespmsg2"></div>
+                    <form action="/stats">
+                        <label for="stats">Stats Method:</label><br>
+                        <input type="button" value="Submit" onclick="loadGetMsg3()">
+                    </form>
+                    <div id="getrespmsg3"></div>
+                    <form action="/clear">
+                        <label for="clear">Clear Method:</label><br>
+                        <input type="button" value="Submit" onclick="loadGetMsg4()">
+                    </form>
+                    <div id="getrespmsg4"></div>            
                     <script>
                         function loadGetMsg() {
-                            let nameVar = document.getElementById("name").value;
+                            let nameVar = document.getElementById("add").value;
                             const xhttp = new XMLHttpRequest();
                             xhttp.onload = function () {
                                 document.getElementById("getrespmsg").innerHTML =
                                     this.responseText;
                             }
-                            xhttp.open("GET", "/hello?name=" + nameVar);
+                            xhttp.open("GET", "/add?x=" + nameVar);
+                            xhttp.send();
+                        }
+                        function loadGetMsg2() {
+                            const xhttp = new XMLHttpRequest();
+                            xhttp.onload = function () {
+                                document.getElementById("getrespmsg2").innerHTML =
+                                    this.responseText;
+                            }
+                            xhttp.open("GET", "/list");
+                            xhttp.send();
+                        }
+                        function loadGetMsg3() {
+                            const xhttp = new XMLHttpRequest();
+                            xhttp.onload = function () {
+                                document.getElementById("getrespmsg3").innerHTML =
+                                    this.responseText;
+                            }
+                            xhttp.open("GET", "/stats");
+                            xhttp.send();
+                        }
+                        function loadGetMsg4() {
+                            const xhttp = new XMLHttpRequest();
+                            xhttp.onload = function () {
+                                document.getElementById("getrespmsg4").innerHTML =
+                                    this.responseText;
+                            }
+                            xhttp.open("GET", "/clear");
                             xhttp.send();
                         }
                     </script>

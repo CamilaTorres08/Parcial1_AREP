@@ -20,6 +20,7 @@ public class Converter {
         if(!res.getBody().isEmpty()){
             resResult += res.getBody();
         }
+        System.out.println(resResult);
         return resResult;
     }
     public static String convertErrorMessage(int status, String error){
