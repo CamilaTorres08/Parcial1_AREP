@@ -78,6 +78,8 @@ public class Facade {
             }
             else if(req.getRoute().startsWith("/add") || req.getRoute().startsWith("/list") || req.getRoute().startsWith("/stats") || req.getRoute().startsWith("/clear")){
                 resp = manageGetResponse(req);
+            } else{
+                resp = resp.statusCode(405).statusMessage("Method Not Allowed").body(convertErrorMessage(405, "Request does not exist")).headers("Content-type", "application/json");
             }
         }catch(ConnectException ex) {
             resp = resp.statusCode(502).statusMessage("Bad Gateway").body(convertErrorMessage(502, "backend_unreachable")).headers("Content-type", "application/json");

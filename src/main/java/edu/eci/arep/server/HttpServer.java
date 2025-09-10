@@ -105,17 +105,22 @@ public class HttpServer {
                 res = res.statusCode(200).statusMessage("OK").body(json);
 
             } else if (req.getRoute().startsWith("/stats")) {
-                Double median = calculator.median();
-                Double desv = calculator.estandarDesv();
                 int total = calculator.total();
-                if (median == null || desv == null) {
-                    res = res.statusCode(400).statusMessage("Bad Request").body(convertErrorMessage(400, "Cannot divide by 0"));
-                } else {
-                    String json = "{"
-                            + "\"status\": " + "\"OK\"" + "," + "\"mean\": " + median + "," + "\"stddev\": " + desv + ", " + "\"count\": " + total
-                            + "}";
-                    res = res.statusCode(200).statusMessage("OK").body(json);
+                if(total <= 0){
+                    res = res.statusCode(409).statusMessage("Conflict").body(convertErrorMessage(409, "empty_list"));
+                }else{
+                    Double median = calculator.median();
+                    Double desv = calculator.estandarDesv();
+                    if (median == null || desv == null) {
+                        res = res.statusCode(400).statusMessage("Bad Request").body(convertErrorMessage(400, "Cannot divide by 0"));
+                    } else {
+                        String json = "{"
+                                + "\"status\": " + "\"OK\"" + "," + "\"mean\": " + median + "," + "\"stddev\": " + desv + ", " + "\"count\": " + total
+                                + "}";
+                        res = res.statusCode(200).statusMessage("OK").body(json);
+                    }
                 }
+
             } else {
                 res = res.statusCode(405).statusMessage("Method Not Allowed").body(convertErrorMessage(405, "Request does not exist"));
             }

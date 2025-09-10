@@ -33,12 +33,21 @@ mvn exec:java
 
 <img src=images/img_5.png />
 
-Comprobar que se limpio la lista
-
-<img src=images/img_6.png />
 
 ## Probar Errores Http
 
 * Metodo que no existe 
 
+<img src=images/img_6.png />
+
+* Servidor Backend no está corriendo
+
 <img src=images/img_7.png />
+
+* Parámetro inválido
+
+<img src=images/img_8.png />
+
+* Lista vacia al calcular stadisticas
+
+<img src=images/img_9.png />
